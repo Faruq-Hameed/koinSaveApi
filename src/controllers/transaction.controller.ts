@@ -35,7 +35,7 @@ export const addMoney = async (req: Request, res: Response) => {
 
 export const sendMoney = async (req: Request, res: Response) => {
   try {
-    const { receiverEmail, purpose, amount } = req.body;
+    const { email, purpose, amount } = req.body;
     const senderId = req.user?.id;
 
     const sender = await User.findById(senderId);
@@ -49,7 +49,7 @@ export const sendMoney = async (req: Request, res: Response) => {
       return;
     }
 
-    const receiver = await User.findOne({ email: receiverEmail });
+    const receiver = await User.findOne({ email });
     if (!receiver) {
       res.status(404).json({ msg: "Receiver not found" });
       return;
@@ -69,7 +69,7 @@ export const sendMoney = async (req: Request, res: Response) => {
       amount,
       purpose,
       senderEmail: sender.email,
-      receiverEmail,
+      receiverEmail: email,
     });
 
     await Transaction.create({
@@ -78,7 +78,7 @@ export const sendMoney = async (req: Request, res: Response) => {
       amount,
       purpose,
       senderEmail: sender.email,
-      receiverEmail,
+      receiverEmail: email,
     });
 
     res.json({ msg: "Money sent successfully" });
